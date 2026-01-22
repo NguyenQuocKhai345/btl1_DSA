@@ -48,7 +48,7 @@ Playlist::Playlist(string name)
     // TODO: Student implementation
 }
 
-int Playlist::size() const
+int Playlist::getSize() const
 {
     // TODO: Student implementation
     return 0;
@@ -65,7 +65,7 @@ void Playlist::clear()
     // TODO: Student implementation
 }
 
-void Playlist::addSong(Song* s)
+void Playlist::addSong(Song *s)
 {
     // TODO: Student implementation
 }
@@ -75,7 +75,7 @@ void Playlist::removeSong(int index)
     // TODO: Student implementation
 }
 
-Song* Playlist::getSong(int index) const
+Song *Playlist::getSong(int index) const
 {
     // TODO: Student implementation
     return nullptr;
@@ -85,13 +85,13 @@ Song* Playlist::getSong(int index) const
 // Playing control
 // =======================
 
-Song* Playlist::playNext()
+Song *Playlist::playNext()
 {
     // TODO: Student implementation
     return nullptr;
 }
 
-Song* Playlist::playPrevious()
+Song *Playlist::playPrevious()
 {
     // TODO: Student implementation
     return nullptr;

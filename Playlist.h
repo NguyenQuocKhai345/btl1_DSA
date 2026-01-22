@@ -49,22 +49,22 @@ class Playlist
 
 private:
     string name;
-    BotkifyLinkedList<Song*> lstSong;
-    int currentIndex;
+    BotkifyLinkedList<Song *> lstSong;
+    int size;
 
 public:
     Playlist(string name);
 
-    int size() const;
+    int getSize() const;
     bool empty() const;
     void clear();
 
-    void addSong(Song* s);
+    void addSong(Song *s);
     void removeSong(int index);
-    Song* getSong(int index) const;
+    Song *getSong(int index) const;
 
-    Song* playNext();
-    Song* playPrevious();
+    Song *playNext();
+    Song *playPrevious();
 
     int getTotalScore();
     bool compareTo(Playlist p, int numSong);
