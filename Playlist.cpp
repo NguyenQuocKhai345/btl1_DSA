@@ -11,6 +11,13 @@ Song::Song(int id,
            int duration,
            int score,
            string url)
+    : id(id),
+      title(title),
+      artist(artist),
+      album(album),
+      duration(duration),
+      score(score),
+      url(url)
 {
     // TODO: Student implementation
 }
@@ -18,67 +25,98 @@ Song::Song(int id,
 int Song::getID() const
 {
     // TODO: Student implementation
-    return 0;
+    return id;
 }
 
 int Song::getDuration() const
 {
     // TODO: Student implementation
-    return 0;
+    return duration;
 }
 
 int Song::getScore() const
 {
     // TODO: Student implementation
-    return 0;
+    return score;
 }
 
 string Song::toString() const
 {
     // TODO: Student implementation
-    return "";
+    return title + " " + artist;
 }
 
 // =======================
 // Playlist implementation
 // =======================
 
-Playlist::Playlist(string name)
+Playlist::Playlist(string name) : name(name), size(0), currentSongIndex(0)
 {
     // TODO: Student implementation
+}
+
+Playlist::~Playlist()
+{
+    clear();
 }
 
 int Playlist::getSize() const
 {
     // TODO: Student implementation
-    return 0;
+    return size;
 }
 
 bool Playlist::empty() const
 {
     // TODO: Student implementation
-    return true;
+    return size == 0;
 }
 
 void Playlist::clear()
 {
     // TODO: Student implementation
+    for (int i = 0; i < size; i++)
+    {
+        delete lstSong.get(i);
+    }
+    lstSong.clear();
+    size = 0;
+    currentSongIndex = 0;
 }
 
 void Playlist::addSong(Song *s)
 {
     // TODO: Student implementation
+    lstSong.add(s);
+    size++;
 }
 
 void Playlist::removeSong(int index)
 {
     // TODO: Student implementation
+    if (index < 0 || index >= size)
+    {
+        throw std::out_of_range("Index is invalid!");
+    }
+    Song *needDelete = lstSong.removeAt(index);
+    delete needDelete;
+
+    if (index < currentSongIndex)
+    {
+        currentSongIndex--;
+    }
+
+    size--;
+    if ((currentSongIndex >= size && size > 0) || size == 0)
+    {
+        currentSongIndex = 0;
+    }
 }
 
 Song *Playlist::getSong(int index) const
 {
     // TODO: Student implementation
-    return nullptr;
+    return lstSong.get(index);
 }
 
 // =======================
@@ -88,13 +126,31 @@ Song *Playlist::getSong(int index) const
 Song *Playlist::playNext()
 {
     // TODO: Student implementation
-    return nullptr;
+    if (size == 0)
+    {
+        throw std::out_of_range("Index is invalid!");
+    }
+    currentSongIndex++;
+    if (currentSongIndex >= size)
+    {
+        currentSongIndex = 0;
+    }
+    return lstSong.get(currentSongIndex);
 }
 
 Song *Playlist::playPrevious()
 {
     // TODO: Student implementation
-    return nullptr;
+    if (size == 0)
+    {
+        throw std::out_of_range("Index is invalid!");
+    }
+    currentSongIndex--;
+    if (currentSongIndex < 0)
+    {
+        currentSongIndex = size - 1;
+    }
+    return lstSong.get(currentSongIndex);
 }
 
 // =======================

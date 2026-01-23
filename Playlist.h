@@ -51,9 +51,11 @@ private:
     string name;
     BotkifyLinkedList<Song *> lstSong;
     int size;
+    int currentSongIndex;
 
 public:
     Playlist(string name);
+    ~Playlist();
 
     int getSize() const;
     bool empty() const;
