@@ -190,6 +190,20 @@ public:
         }
         return ss.str();
     }
+
+    T *toArray() const
+    {
+        if (count == 0)
+            return nullptr;
+        T *arr = new T[count];
+        Node *curr = head;
+        for (int i = 0; i < count; i++)
+        {
+            arr[i] = curr->data;
+            curr = curr->next;
+        }
+        return arr;
+    }
 };
 
 #endif // BOTKIFY_LINKED_LIST_H
