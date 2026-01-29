@@ -245,7 +245,56 @@ int Playlist::getTotalScore()
 bool Playlist::compareTo(Playlist p, int numSong)
 {
     // TODO: Student implementation
-    return false;
+    if (this->size < numSong || p.getSize() < numSong)
+        return false; // Hoặc xử lý tùy ý
+
+    // Helper lambda hoặc xử lý inline để tính avg max score
+    auto calculateAvgMax = [&](Playlist &pl, int k) -> double
+    {
+        Song **arr = pl.lstSong.toArray();
+        int n = pl.getSize();
+        if (n < k)
+        {
+            delete[] arr;
+            return 0;
+        }
+
+        long long sumMax = 0;
+        int countWin = n - k + 1;
+
+        // Sliding Window Maximum sử dụng Deque thủ công (mảng)
+        int *deque = new int[n];
+        int front = 0, rear = -1;
+
+        for (int i = 0; i < n; i++)
+        {
+            // Loại bỏ phần tử ra khỏi window
+            if (front <= rear && deque[front] <= i - k)
+                front++;
+
+            // Duy trì tính giảm dần của deque
+            while (front <= rear && arr[deque[rear]]->getScore() <= arr[i]->getScore())
+            {
+                rear--;
+            }
+
+            deque[++rear] = i; // Push back
+
+            if (i >= k - 1)
+            {
+                sumMax += arr[deque[front]]->getScore();
+            }
+        }
+
+        delete[] arr;
+        delete[] deque;
+        return (double)sumMax / countWin;
+    };
+
+    double avg1 = calculateAvgMax(*this, numSong);
+    double avg2 = calculateAvgMax(p, numSong);
+
+    return avg1 >= avg2;
 }
 
 // =======================
@@ -255,10 +304,74 @@ bool Playlist::compareTo(Playlist p, int numSong)
 void Playlist::playRandom(int index)
 {
     // TODO: Student implementation
+    if (index < 0 || index >= size)
+        return; // Spec không yêu cầu throw
+
+    Song **arr = lstSong.toArray();
+
+    // Tìm Next Greater Element (về duration) cho tất cả các phần tử
+    int *NGE = new int[size];
+    int *stack = new int[size];
+    int top = -1;
+
+    for (int i = size - 1; i >= 0; i--)
+    {
+        while (top != -1 && arr[stack[top]]->getDuration() <= arr[i]->getDuration())
+        {
+            top--;
+        }
+        NGE[i] = (top == -1) ? -1 : stack[top];
+        stack[++top] = i;
+    }
+
+    // In chuỗi bài hát
+    int curr = index;
+    bool first = true;
+    while (curr != -1)
+    {
+        if (!first)
+            cout << ",";
+        cout << arr[curr]->toString();
+        first = false;
+        curr = NGE[curr];
+    }
+    // Spec yêu cầu: e1,e2,... không có newline cuối hàm
+
+    delete[] arr;
+    delete[] NGE;
+    delete[] stack;
 }
 
 int Playlist::playApproximate(int step)
 {
     // TODO: Student implementation
-    return 0;
+    if (size == 0)
+        return 0;
+    Song **arr = lstSong.toArray();
+
+    // DP[i] = chi phí thấp nhất để đến bài i
+    long long *dp = new long long[size];
+    dp[0] = 0;
+    for (int i = 1; i < size; i++)
+        dp[i] = 1e18; // Init infinity
+
+    for (int i = 1; i < size; i++)
+    {
+        // Có thể nhảy tới i từ [i-step, i-1]
+        for (int j = 1; j <= step; j++)
+        {
+            int prev = i - j;
+            if (prev < 0)
+                break;
+
+            long long cost = dp[prev] + std::abs(arr[i]->getDuration() - arr[prev]->getDuration());
+            if (cost < dp[i])
+                dp[i] = cost;
+        }
+    }
+
+    int result = (int)dp[size - 1];
+    delete[] arr;
+    delete[] dp;
+    return result;
 }
